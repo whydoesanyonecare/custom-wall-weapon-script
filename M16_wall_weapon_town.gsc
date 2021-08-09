@@ -48,54 +48,45 @@ wallweapons( weapon, origin, angles, cost, ammo )
 wallweaponmonitor( weapon, cost, ammo ) 
 {
 	self endon( "game_ended" );
-	weap = get_weapon_display_name( weapon );
-	upgradedammocost = 4500;
-	in_use = 0;
+	name = get_weapon_display_name( weapon );
+	self.in_use_weap = 0;
 	while( 1 )
 	{
 		foreach( player in level.players )
 		{
 			if( distance( self.origin, player.origin ) <= 70 )
 			{
-            	player thread SpawnHint( self.origin, 30, 30, "HINT_ACTIVATE", "Hold &&1 For Buy " + weap + " [Cost: " + cost + "] Ammo [Cost: 600] Upgraded Ammo [Cost: 4500]" );
-				if( player usebuttonpressed() && !(player hasWeapon("m16_gl_upgraded_zm")) && !(player hasWeapon(weapon)) && !(in_use) && player.score >= cost && !player maps/mp/zombies/_zm_laststand::player_is_in_laststand())
-				{
-					player playsound( "zmb_cha_ching" );
-					in_use = 1;
-					player.score -= cost;
-					player thread weapon_give( weapon, 0, 1 );
-					player iprintln( "^2" + ( weap + " Buy" ) );
-                 	wait 3;
-			     	in_use = 0;
-				}
-				if( player usebuttonpressed() && (player hasWeapon(weapon)) && !(in_use) && player.score >= ammo && !player maps/mp/zombies/_zm_laststand::player_is_in_laststand())
-				{
-					player playsound( "zmb_cha_ching" );
-					in_use = 1;
-					player.score -= ammo;
-					player setweaponammoclip(weapon, 150);
-					player setWeaponAmmostock(weapon, 900 );
-					player iprintln( "^2" + ( weap + " Ammo Buy" ) );
-                   	wait 3;
-			       	in_use = 0;
-				}	
-				if( player usebuttonpressed() && (player hasWeapon("m16_gl_upgraded_zm")) && !(in_use) && player.score >= upgradedammocost && !player maps/mp/zombies/_zm_laststand::player_is_in_laststand())
-				{
-					player playsound( "zmb_cha_ching" );
-					in_use = 1;
-					player.score -= upgradedammocost;
-					player setweaponammoclip("m16_gl_upgraded_zm", 150);
-					player setWeaponAmmostock("m16_gl_upgraded_zm", 900 );
-					player iprintln( "^2" + ( weap + " Upgraded Ammo Buy" ) );
-                	wait 3;
-			    	in_use = 0;
-				}
-				else
-				{
-					if( player usebuttonpressed() && player.score < cost && !player maps/mp/zombies/_zm_laststand::player_is_in_laststand())
-					{
-						player maps/mp/zombies/_zm_audio::create_and_play_dialog( "general", "no_money_weapon" );
-					}
+                player thread SpawnHint( self.origin, 30, 30, "HINT_ACTIVATE", "Hold ^3&&1^7 For Buy " + name + " [Cost: " + cost + "] Ammo [Cost: " + ammo + "] Upgraded Ammo [Cost: 4500]" );
+                if(player usebuttonpressed() && !player maps/mp/zombies/_zm_laststand::player_is_in_laststand() )
+                {
+    				if( !(player has_weapon_or_upgrade(weapon)) && player.score >= cost && player can_buy_weapon())
+	    			{
+		    			player playsound( "zmb_cha_ching" );
+			    		player.score -= cost;
+				    	player thread weapon_give( weapon, 0, 1 );
+                        wait 3;
+	    			}
+                    else
+    			    {
+	    			    if(player has_upgrade(weapon) && player.score >= 4500)
+		    		    {
+			    		    if(player ammo_give(get_upgrade_weapon(weapon)))
+				    	    {
+					    	    player.score -= 4500;
+						        player playsound("zmb_cha_ching");
+						        wait 3;
+					        }
+    				    }
+	    			    else if(player hasweapon(weapon) && player.score >= ammo)
+		    		    {
+			    		    if(player ammo_give(weapon))
+				    	    {
+					    	    player.score -= ammo;
+						        player playsound("zmb_cha_ching");
+						        wait 3;
+		    			    }
+			    	    }
+			        }
 				}
 			}
 		}
