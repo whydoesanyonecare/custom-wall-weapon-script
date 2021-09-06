@@ -2,6 +2,7 @@
 #include common_scripts/utility;
 #include maps/mp/gametypes_zm/_hud_util;
 #include maps/mp/zombies/_zm_weapons;
+#include maps/mp/zombies/_zm_magicbox;
 init()
 {
     level._effect["wall_m16"] = loadfx( "maps/zombie/fx_zmb_wall_buy_m16" ); 
