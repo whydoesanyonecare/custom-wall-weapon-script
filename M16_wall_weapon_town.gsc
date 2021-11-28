@@ -10,11 +10,6 @@ init()
     flag_wait( "initial_blackscreen_passed" );
     thread wallweaponmonitorbox(( 2273.641, 167.5, 140.125 ), ( 0, 180, 0 ), "m16_zm", 1200, 600 );
     thread playchalkfx("wall_m16", ( 2274.641, 168, 140.125 ), ( 0, 180, 0 ));
-    foreach(player in level.players)
-    {
-        player.score += 5999;
-    }
-
 }
 
 playchalkfx(effect, origin, angles)
