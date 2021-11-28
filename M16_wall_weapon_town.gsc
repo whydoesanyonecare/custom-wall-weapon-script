@@ -1,4 +1,5 @@
 #include maps/mp/_utility;
+#include maps/mp/zombies/_zm_utility;
 #include common_scripts/utility;
 #include maps/mp/gametypes_zm/_hud_util;
 #include maps/mp/zombies/_zm_weapons;
@@ -9,6 +10,10 @@ init()
     flag_wait( "initial_blackscreen_passed" );
     thread wallweaponmonitorbox(( 2273.641, 167.5, 140.125 ), ( 0, 180, 0 ), "m16_zm", 1200, 600 );
     thread playchalkfx("wall_m16", ( 2274.641, 168, 140.125 ), ( 0, 180, 0 ));
+    foreach(player in level.players)
+    {
+        player.score += 5999;
+    }
 
 }
 
@@ -26,9 +31,6 @@ playchalkfx(effect, origin, angles)
 wallweaponmonitorbox(origin, angles, weapon, cost, ammo )
 {
     name = get_weapon_display_name( weapon );
-	model = spawn("script_model", origin);
-	model.angles = angles;
-	model setmodel(getweaponmodel( weapon ));
 	trigger = spawn("trigger_radius", origin, 0, 35, 80);
 	trigger SetCursorHint("HINT_NOICON");
 	trigger SetHintString("Hold ^3&&1^7 For Buy " + name + " [Cost: " + cost + "] Ammo [Cost: " + ammo + "] Upgraded Ammo [Cost: 4500]");
@@ -42,6 +44,13 @@ wallweaponmonitorbox(origin, angles, weapon, cost, ammo )
                 player playsound( "zmb_cha_ching" );
                 player.score -= cost;
                 player thread weapon_give( weapon, 0, 1 );
+                if(!isdefined(model))
+                {
+                    play_sound_at_pos( "weapon_show", origin, player );
+                    model = spawn("script_model", origin);
+                    model.angles = angles;
+                    model setmodel(getweaponmodel( weapon ));
+                }
                 wait 3;
             }
             else
